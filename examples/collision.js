@@ -30,20 +30,16 @@ export function setupCollisions(scene, house) {
         showHelpers
     );
 
-    // =========================
-    // 🧱 PARED DERECHA (CORREGIDA)
-    // =========================
-
-    const doorStartZ = 50; // 🔧 ajusta esto
-
+    // 🧱 DERECHA (con puerta)
+    const doorStartZ = 50;
     const wallDepth = (size.z / 2) + doorStartZ;
 
     createCollisionBox(
         scene,
         new THREE.Vector3(
-            center.x + size.x / 2, // lado derecho
+            center.x + size.x / 2,
             0,
-            center.z + size.z / 2 - wallDepth / 2 // 🔥 AQUÍ ESTÁ EL FIX
+            center.z + size.z / 2 - wallDepth / 2
         ),
         new THREE.Vector3(
             10,
@@ -52,35 +48,30 @@ export function setupCollisions(scene, house) {
         ),
         showHelpers
     );
-    
 
-    // 🚪 ahora la puerta queda libre
-    // =========================
-// 🧱 PARED INTERIOR (CORREGIDA ORIENTACIÓN) 🔥
-// =========================
+    // 🧱 PARED INTERIOR
+    const innerWallThickness = 10;
+    const innerWallLength = 250;
 
-const innerWallThickness = 10;  
-const innerWallLength = 250;   // ahora será el largo en X
+    const innerOffsetX = size.x / 2 - 120;
+    const innerOffsetZ = -50;
 
-const innerOffsetX = size.x / 2 - 120;
-const innerOffsetZ = -50;
+    createCollisionBox(
+        scene,
+        new THREE.Vector3(
+            center.x + innerOffsetX,
+            0,
+            center.z + innerOffsetZ
+        ),
+        new THREE.Vector3(
+            innerWallLength,
+            height,
+            innerWallThickness
+        ),
+        showHelpers
+    );
 
-createCollisionBox(
-    scene,
-    new THREE.Vector3(
-        center.x + innerOffsetX,
-        0,
-        center.z + innerOffsetZ
-    ),
-    new THREE.Vector3(
-        innerWallLength,   // 🔥 ahora largo en X
-        height,
-        innerWallThickness // 🔥 delgada en Z
-    ),
-    showHelpers
-);
-
-    // 🧱 FRENTE REAL DEL MODELO
+    // 🧱 FRENTE
     createCollisionBox(
         scene,
         new THREE.Vector3(center.x, 0, center.z + size.z / 2),
@@ -100,7 +91,11 @@ function createCollisionBox(scene, position, size, showHelper) {
     if (showHelper) {
         const mesh = new THREE.Mesh(
             new THREE.BoxGeometry(size.x, size.y, size.z),
-            new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
+            new THREE.MeshBasicMaterial({
+                transparent: true,
+                opacity: 0,      // 🔥 completamente invisible
+                depthWrite: false
+            })
         );
 
         mesh.position.set(position.x, position.y + size.y / 2, position.z);
